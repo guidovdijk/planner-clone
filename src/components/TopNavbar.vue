@@ -1,10 +1,10 @@
 <template>
-    <div class="navbar navbar-top">
-        <h1>test</h1>
-        <h6 class="subtitle">test</h6>
+    <div class="">
+        <p class="title is-1 has-text-centered">Vue planner app</p>
+        <p class="is-3 subtitle has-text-centered">test</p>
     </div>
 </template>
-<style scoped>
+<style>
 
     
 </style>
