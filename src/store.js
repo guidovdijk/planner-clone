@@ -13,9 +13,6 @@ export default new Vuex.Store({
         getTiles: state => {
             return state.newTiles;
         },
-        getColumns: state => {
-            return state.newColumns;
-        }
     },
     mutations: {
         setTiles: state => {
@@ -24,40 +21,26 @@ export default new Vuex.Store({
             db.collection('tiles').orderBy('createdAt').onSnapshot((snapshot) => {
                 items = [];
                 snapshot.forEach((doc) => {
-                    items.push({ 
-                        createdAt: new Date(),
-                        text: doc.data().text,
-                        werkproces: doc.data().werkproces,
-                        assignee: doc.data().assignee,
-                        status: doc.data().status,
-                        timeline: doc.data().timeline,
-                        estimation: doc.data().estimation,
-                        timetracking: doc.data().timetracking,
-                        deadline: doc.data().deadline,
-                        id: doc.id,
+                    console.log(doc.data());
+
+                    const item = {};
+
+                    Object.entries(doc.data()).forEach(d => {
+                        const prop = d[0];
+                        const value = d[1];
+                        
+                        item[prop] = value;
                     });
+                    item.id = doc.id;
+
+                    items.push(item);
+
                 });
-        
                 state.newTiles = items;
             })
-        },      
-        setColumns: state => {
-            let items = [];
-       
-            db.collection('columns').onSnapshot((snapshot) => {
-                items = [];
-                snapshot.forEach((doc) => {
-                    items.push({ 
-                        text: doc.data().text,
-                    });
-                });
-        
-                state.newColumns = items;
-            })
-        }      
+        },        
     },
     actions: {
         setTiles: context => { context.commit('setTiles'); },
-        setColumns: context => { context.commit('setColumns'); }
     }
 })
