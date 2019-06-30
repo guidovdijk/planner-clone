@@ -5,14 +5,14 @@
 		<div class="columns">
 			<div class="column is-9">
 				<div class="table-wrapper">
-					<table class="table is-fullwidth">
+					<table width="800px" class="table is-fullwidth">
 						<thead>
 							<tr v-for="(tile) in this.$store.getters.getTiles.slice(0,1)" v-bind:key="tile.id">
-								<th></th>
-								<th v-for="(value, name, index) in filteredTiles(tile)" v-bind:key="index">
+								<th width="250" class="is-sticky is-left has-background-white"></th>
+								<th width="150" v-for="(value, name, index) in filteredTiles(tile)" v-bind:key="index">
 									{{name}}
 								</th>
-								<th class="is-sticky">
+								<th width="50" class="is-sticky is-right has-background-white">
 									<div :class="newColumn ? 'is-active' : ''" class="dropdown is-right">
 										<div class="dropdown-trigger">
 											<span class="icon dropdown-icon" @click="newColumn = !newColumn">
@@ -57,30 +57,37 @@
 						<tbody class="has-background-light">
 							<tr class="is-multiline" v-for="(tile) in this.$store.getters.getTiles" v-bind:key="tile.id">
 								
-								<td class="is-sticky">
+								<td  width="200" class="is-sticky has-background-light is-left">
 									<!-- <span class="icon" @click="deleteTile(tile.id)">
 										<i class="fas fa-caret-down"></i>
 									</span> -->
+									<div class="has-stripe is-left"></div>
 
-									<input v-on:change="updateTitle($event, tile)" type="text" :value="tile.title"/>
+									<div class="field">
+										<p class="control is-expanded">
+											<input class="has-text-weight-semibold has-text-left" v-on:change="updateTitle($event, tile)" type="text" :value="tile.title"/>
+										</p>
+									</div>
 								</td>
 
-								<td v-for="(value, name, index) in filteredTiles(tile)" v-bind:key="index">
+								<td width="150" v-for="(value, name, index) in filteredTiles(tile)" v-bind:key="index">
 									<input v-on:change="updataData($event, name, tile.id)" type="text" :value="value"/>
 								</td>
 
-								<td class="is-sticky"></td>
+								<td width="50" class="is-sticky is-right has-background-white-bis">
+									<div class="has-stripe is-right"></div>
+								</td>
 								
 							</tr>
 						</tbody>
 					</table>
 
 				</div>
-				<form v-on:submit.prevent="addTile">
+				<form class="add" v-on:submit.prevent="addTile">
 					<div class="field is-grouped">
 						<p class="control is-expanded">
 							<input v-model="newTile.title" class="input add-tile has-text-grey-light" placeholder="+ Add" type="text"/>
-							<input type="submit" class="add-tile__submit button is-primary" value="Add Tile">
+							<input v-if="newTile.title" type="submit" class="add-tile__submit button is-primary" value="Add Tile">
 						</p>
 					</div>
 				</form>
@@ -180,6 +187,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
+	$input-shadow: none !default;
 	@import '~bulma';
 
 	$link: red !default;
@@ -194,17 +202,44 @@ export default {
 	}
 	.is-sticky {
 		position: sticky;
+	}
+	.is-left, .is-left:before {
 		left: 0;
-		background: $light;
+	} 
+	.is-right, .is-right:before {
+		right: 0;
+	}
+	.has-stripe {
+		&:before, &:after {
+			content: "";
+			height: 100%;
+			top: 0;
+			bottom: 0;
+			position: absolute;
+		}
+		&:before {
+			width: 8px;
+			background: $grey-lighter;
+		}
+		&:after {
+			width: 2px;
+			background: $white;
+			.is-left & {
+				right: 0;
+			}
+			.is-right & {
+				left: 0;
+			}
+		}
 	}
 	.table-wrapper {
-		overflow-x: auto;
-		&:-webkit-scrollbar { 
+		overflow-x: scroll;
+		&::-webkit-scrollbar { 
             display: none; 
         } 
 	}
 	.table {
-		min-width: 800px;
+		table-layout: fixed;
 		&:not(:last-child) {
 			margin-bottom: 0;
 		}
@@ -212,7 +247,8 @@ export default {
 			tr {
 				height: $height;
 				td {
-					border: none;
+					border: 2px solid white;
+					box-shadow: inset 0 -1px 0px lightgrey;
 				}
 			}
 		}
@@ -220,26 +256,26 @@ export default {
 			appearance: none;
 			border: none;
 			background: transparent;
+			text-align: center;
 		}
 	}
 
-	.add-tile {
-		border: 1px solid #e6e9ef;
-		height: $height;
-		background: #fff;
-		outline: none;
-		padding-left: 20px;
-		width: 100%;
-		&__submit {
-			position: absolute;
-			top: 0;
-			right: 0;
-			border-radius: 0;
-			height: 100%;
-			opacity: 0;
-		}
-		&:focus + &__submit {
-			opacity: 1;
+	.add {
+		margin-top: 2px;
+		.add-tile {
+			border: 1px solid #e6e9ef;
+			height: $height;
+			background: #fff;
+			outline: none;
+			padding-left: 20px;
+			width: 100%;
+			&__submit {
+				position: absolute;
+				top: 0;
+				right: 0;
+				border-radius: 0;
+				height: 100%;
+			}
 		}
 	}
 </style>
