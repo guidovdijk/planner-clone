@@ -12,7 +12,7 @@
 								<th v-for="(value, name, index) in filteredTiles(tile)" v-bind:key="index">
 									{{name}}
 								</th>
-								<th>
+								<th class="is-sticky">
 									<div :class="newColumn ? 'is-active' : ''" class="dropdown is-right">
 										<div class="dropdown-trigger">
 											<span class="icon dropdown-icon" @click="newColumn = !newColumn">
@@ -21,9 +21,33 @@
 										</div>
 										<div class="dropdown-menu" id="dropdown-menu" role="menu">
 											<div class="dropdown-content">
-												<a href="#" class="dropdown-item">
-													Dropdown item
-												</a>
+												<template v-if="!dropdownType">
+													<a @click.prevent="dropdownType = 'status'" href="#" class="dropdown-item">
+														<span class="icon">
+															<i class="fas fa-align-justify"></i>
+														</span>
+														Status
+													</a>
+													<hr class="dropdown-divider"/>
+													<a @click.prevent="dropdownType = 'text'" href="#" class="dropdown-item">
+														<span class="icon">
+															<i class="fas fa-font"></i>
+														</span>
+														Text
+													</a>
+													<hr class="dropdown-divider"/>
+													<a @click.prevent="dropdownType = 'datum'" href="#" class="dropdown-item">
+														<span class="icon">
+															<i class="far fa-calendar-alt"></i>
+														</span>
+														Datum
+													</a>
+												</template>
+												<template v-else>
+													<div class="dropdown-item">
+														<input @blur="addColumn" class="input" v-model="newColumnText" type="text" placeholder="Column name...">
+													</div>
+												</template>
 											</div>
 										</div>
 									</div>
@@ -34,9 +58,9 @@
 							<tr class="is-multiline" v-for="(tile) in this.$store.getters.getTiles" v-bind:key="tile.id">
 								
 								<td class="is-sticky">
-									<span class="icon" @click="deleteTile(tile.id)">
+									<!-- <span class="icon" @click="deleteTile(tile.id)">
 										<i class="fas fa-caret-down"></i>
-									</span>
+									</span> -->
 
 									<input v-on:change="updateTitle($event, tile)" type="text" :value="tile.title"/>
 								</td>
@@ -44,6 +68,8 @@
 								<td v-for="(value, name, index) in filteredTiles(tile)" v-bind:key="index">
 									<input v-on:change="updataData($event, name, tile.id)" type="text" :value="value"/>
 								</td>
+
+								<td class="is-sticky"></td>
 								
 							</tr>
 						</tbody>
@@ -77,6 +103,7 @@ export default {
 	data () {
 		return {
 			msg: 'Welcome to Your Vue.js App',
+			dropdownType: false,
 			newColumn: false,
 			newColumnText: '',
 			newTile: {
@@ -109,12 +136,19 @@ export default {
 			});
 		},
 		addColumn: async function(tile){
-			const snapshot = await db.collection('tiles').get()
-			snapshot.docs.map(doc => { 
-				doc.update(`${key}`, '').catch((error) => {
-					console.error("Error adding a new column: ", error);
+			
+			// Get a new write batch
+
+          	db.collection('tiles').orderBy('createdAt').onSnapshot((snapshot) => {
+				const batch = db.batch();
+                snapshot.forEach((doc) => {
+					const ref = doc.ref;
+					batch.update(ref, {
+						[this.newColumnText]: '',
+					})
 				});
-			});
+				batch.commit();
+            })
 			
 		},
 		addTile: function(){
