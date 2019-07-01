@@ -7,7 +7,6 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     state: {
         newTiles: [],
-        newColumns: [],
     },
     getters: {
         getTiles: state => {
@@ -21,8 +20,6 @@ export default new Vuex.Store({
             db.collection('tiles').orderBy('createdAt').onSnapshot((snapshot) => {
                 items = [];
                 snapshot.forEach((doc) => {
-                    console.log(doc.data());
-
                     const item = {};
 
                     Object.entries(doc.data()).forEach(d => {
