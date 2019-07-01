@@ -9,13 +9,13 @@
 						<thead>
 							<tr v-for="(tile) in this.$store.getters.getTiles.slice(0,1)" v-bind:key="tile.id">
 								<th width="250" class="is-sticky is-left has-background-white"></th>
-								<th width="150" v-for="(value, name, index) in filteredTiles(tile)" v-bind:key="index">
+								<th width="150" v-for="(value, name, index) in filteredTiles(tile)" @click="deleteColumn(name)" v-bind:key="index">
 									{{name}}
 								</th>
 								<th width="50" class="is-sticky is-right has-background-white">
 									<div :class="newColumn ? 'is-active' : ''" class="dropdown is-right">
 										<div class="dropdown-trigger">
-											<span class="icon dropdown-icon" @click="newColumn = !newColumn">
+											<span class="icon dropdown-icon" @click="newColumn = !newColumn, dropdownType = false">
 												<i class="fas fa-plus-circle"></i>
 											</span>
 										</div>
@@ -45,7 +45,7 @@
 												</template>
 												<template v-else>
 													<div class="dropdown-item">
-														<input @blur="addColumn" class="input" v-model="newColumnText" type="text" placeholder="Column name...">
+														<input @blur="addColumn, dropdownType = false" class="input" v-model="newColumnText" type="text" placeholder="Column name...">
 													</div>
 												</template>
 											</div>
@@ -137,15 +137,11 @@ export default {
 			this.updataData(event, 'title', tile.id);
 		},
 		updataData: function(event, key, id){
-			console.log(event, key, id)
 			db.collection("tiles").doc(id).update(`${key}`, event.target.value).catch((error) => {
 				console.error("Error updating document: ", error);
 			});
 		},
 		addColumn: async function(tile){
-			
-			// Get a new write batch
-
           	db.collection('tiles').orderBy('createdAt').onSnapshot((snapshot) => {
 				const batch = db.batch();
                 snapshot.forEach((doc) => {
@@ -155,24 +151,34 @@ export default {
 					})
 				});
 				batch.commit();
-            })
-			
-		},
-		addTile: function(){
-			console.log('addTile')
-			const tile = this.newTile;
-
-			db.collection('tiles').add({
-				title: tile.title,
-				werkproces: '',
-				assignee: '',
-				status: '',
-				timeline: '',
-				estimation: '',
-				timetracking: '',
-				deadline: '',
-				createdAt: new Date(),
 			});
+		},
+		deleteColumn: async function(column){
+			const tiles = db.collection('tiles').get().then(snapshot => {
+                snapshot.forEach((doc) => {
+					const data = doc.data();
+					delete data[column];
+					doc.ref.set(data);
+				});
+            });
+		},
+		addTile: function(test){
+			const title = this.newTile.title;
+			const newTile = {};
+
+			Object.entries(this.$store.getters.getTiles[0]).forEach(d => {
+				const prop = d[0];
+				const value = d[1];
+				
+				if(prop !== 'id'){
+					newTile[prop] = '';
+				}
+			});
+
+			newTile.title = title;
+			newTile.createdAt = new Date();
+			
+			db.collection('tiles').add(newTile);
 			this.newTile.title = '';
 		},
 		deleteTile: function(id){
