@@ -1,22 +1,40 @@
 <template>
     <div :class="[openDropdown ? 'is-active' : '', 'is-'+ position]" class="dropdown">
-        <div class="dropdown-trigger is-margin-auto">
-            <span :class="[rotate, hover]" class="icon dropdown-icon" @click="collapse(), openDropdown = !openDropdown">
-                <i :class="icon"></i>
-            </span>
+        <div class="dropdown-trigger is-margin-auto" @click="collapse(), openDropdown = !openDropdown">
+            <template v-if="icon">
+                <span :class="[rotate, hover]" class="icon dropdown-icon">
+                    <i :class="icon"></i>
+                </span>
+            </template>
+            <template v-else>
+                <span>
+                    {{text}}
+                </span>
+            </template>
         </div>
         <div class="dropdown-menu" id="dropdown-menu" role="menu">
             <template v-if="!showNextMenu">
                 <div class="dropdown-content">
-                    <a v-for="(item, index) in dropdownItems" v-bind:key="index" @click.prevent="sendType(item.function, item.dropdownContent)" href="#" class="dropdown-item">
-                        <span class="icon">
-                            <i class="fas" :class="'fa-' + item.icon"></i>
-                        </span>
+                    <div class="dropdown-grid">
+                    <a 
+                    v-for="(item, index) in dropdownItems" 
+                    v-bind:key="index" 
+                    :style="{'background-color': item.background}"
+                    @click.prevent="sendType(item.function, item.dropdownContent)" 
+                    href="#" 
+                    class="dropdown-item"
+                    >
+                        <template v-if="item.icon">
+                            <span class="icon">
+                                <i class="fas" :class="'fa-' + item.icon"></i>
+                            </span>
+                        </template>
                         <span>
                             {{item.text}}
                         </span>
                     </a>
-                  
+                                          
+                    </div>
                     <hr class="dropdown-divider">
                     <div class="dropdown-item has-text-centered">
                         <a @click.prevent="openDropdown = false" href="#">
@@ -44,6 +62,7 @@ export default {
         "tiles",
         "hover",
         "rotate",
+        "text",
     ],
     data() {
         return {

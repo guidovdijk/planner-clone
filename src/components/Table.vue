@@ -50,7 +50,15 @@
 						</td>
 						
 						<td width="150" v-for="(value, name, index) in filteredTiles(tile.todo_item)" v-bind:key="index">
-							<input v-on:change="updataData($event, name, tiles.id, tile.id)" type="text" :value="value.text"/>
+							<template v-if="value.type === 'status'">
+								<Status :status="value.text"/>
+							</template>
+							<template v-else-if="value.type === 'date'">
+								<Date :tile="value"/>
+							</template>
+							<template v-else>
+								<input v-on:change="updataData($event, name, tiles.id, tile.id)" type="text" :value="value.text"/>
+							</template>
 						</td>
 
 						<td width="50" class="is-sticky is-right has-background-white-bis">
@@ -77,12 +85,16 @@
 import db from '../firebase/firebase';
 import DropdownEdit from './dropdowns/DropdownEdit';
 import DropdownAdd from './dropdowns/DropdownAdd';
+import Status from "./tiles/Status";
+import Date from "./tiles/Date";
 
 export default {
 	name: 'Table',
 	components: {
 		DropdownAdd: DropdownAdd,
 		DropdownEdit: DropdownEdit,
+		Status: Status,
+		Date: Date,
 	},
     props: [
 		"tiles",
