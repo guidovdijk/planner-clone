@@ -6,7 +6,7 @@
 					<tr>
 						<th width="250" :class="collapsed ? 'has-background-white-bis' : 'has-background-white'" class="is-sticky is-left has-index">
 							<div class="field field-title is-grouped">
-								<p class="control is-margin-auto ignore-overflow">
+								<p class="control is-margin-auto ignore-overflow" v-bind:style="{ 'color': getThemeColor(tiles.tile.color, '#363636')}">
 									<DropdownEdit 
 										:tiles="tiles.id"
 										@collapse="collapse"
