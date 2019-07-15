@@ -68,6 +68,11 @@ export default {
     .tile--status {
         text-align: center;
         font-size: 11px;
+        &:hover {
+            .dropdown {
+                background-color: rgba(white, 0.2)
+            }
+        }
         .dropdown {
             width: 100%;
         }
