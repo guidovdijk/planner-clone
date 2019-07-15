@@ -50,11 +50,23 @@ export default new Vuex.Store({
 				const batch = db.batch();
                 snapshot.forEach((doc) => {
                     const ref = doc.ref;
+                    let dataObj = {};
+                    if(data.type.text == 'Date'){
+                        dataObj = {
+                            type: data.type.text,
+                            date: {
+                                start: '',
+                                end: '',
+                            }
+                        }
+                    } else {
+                        dataObj = {
+                            type: data.type.text,
+                            text: '',
+                        }
+                    }
 					batch.update(ref, {
-						[data.text]: {
-                            type: data.type,
-                            text: ''
-                        },
+						[data.text]: dataObj
 					})
 				});
                 batch.commit();

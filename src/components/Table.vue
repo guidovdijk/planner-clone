@@ -1,7 +1,7 @@
 <template>
 	<div class="form-table-wrapper">
 		<div class="table-wrapper" :class="collapsed ? 'hidden-when-collapsed is-height-auto' : ''">
-			<table width="800px" class="table is-fullwidth">
+			<table class="table is-fullwidth">
 				<thead>
 					<tr>
 						<th width="250" :class="collapsed ? 'has-background-white-bis' : 'has-background-white'" class="is-sticky is-left has-index">
@@ -44,12 +44,12 @@
 									</span>
 								</p>
 								<p class="control is-expanded">
-									<input class="has-text-weight-semibold has-text-left" v-on:change="updataData($event, 'title', tiles.id, tile.id)" type="text" :value="tile.todo_item.title"/>
+									<input class="has-text-weight-semibold has-text-left" v-on:change="updataData($event, 'title', tiles.id, tile.id)" type="text" :value="tile.todo_item.title.text"/>
 								</p>
 							</div>
 						</td>
 						
-						<td width="150" v-for="(value, name, index) in filteredTiles(tile.todo_item)" v-bind:key="index">
+						<td width="100" v-for="(value, name, index) in filteredTiles(tile.todo_item)" v-bind:key="index">
 							<template v-if="value.type === 'status'">
 								<Status 
 									:status="data.status"
@@ -59,8 +59,11 @@
 									:id="tile.id"
 								/>
 							</template>
-							<template v-else-if="value.type === 'date'">
-								<Date :tile="value"/>
+							<template v-else-if="value.type === 'Date'">
+								<Date 
+									:tile="value"
+									:color="getThemeColor(tiles.tile.color, '#363636')"
+								/>
 							</template>
 							<template v-else>
 								<input v-on:change="updataData($event, name, tiles.id, tile.id)" type="text" :value="value.text"/>
@@ -186,12 +189,23 @@ export default {
 				const value = d[1];
 				
 				newTile[prop] = new Object();
-				newTile[prop].type = value.type
-				newTile[prop].text = ''
+				if(value.type){
+					if(value.type.text == 'date'){
+						newTile[prop].type = value.type.text
+						newTile['date'] = new Object();
+						newTile.date.start = '';
+						newTile.date.end = '';
+	
+					} else {
+						newTile[prop].type = value.type;
+						newTile[prop].text = '';
+					}
+				}
 			});
 
-			newTile.title = title;
-			newTile.createdAt = new Date();
+			newTile.title = {};
+			newTile.title.text = title;
+			newTile.createdAt = new window.Date();
 			
 			doc.add(newTile).then(() => {
                 this.$store.dispatch('setTiles');

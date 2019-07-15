@@ -49,7 +49,7 @@ export default {
                         icon: "font",
                     },
                     {
-                        text: "Datum",
+                        text: "Date",
                         icon: "calendar-alt",
                     },
                 ]
