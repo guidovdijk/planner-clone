@@ -20,7 +20,7 @@
                     v-for="(item, index) in dropdownItems" 
                     v-bind:key="index" 
                     :style="{'background-color': item.background}"
-                    @click.prevent="sendType(item.function, item.dropdownContent)" 
+                    @click.prevent="sendType(item)" 
                     href="#" 
                     class="dropdown-item"
                     >
@@ -79,9 +79,9 @@ export default {
         collapse(){
             this.$emit('collapse', false);
         },
-        sendType(func, dropdownContent) {
-            this.$emit('clicked', {func, dropdownContent});
-            if(func) this.openDropdown = !this.openDropdown;
+        sendType(item) {
+            this.$emit('clicked', item);
+            if(item.function) this.openDropdown = !this.openDropdown;
         }
     }
 }
@@ -106,11 +106,6 @@ export default {
             .dropdown-icon:not(.no-hover) {
                 color: $icon-hover-background;
 			}
-        }
-        &.is-left {
-            .dropdown-content {
-                margin-left: 5px;
-            }
         }
         &-icon:not(.no-hover):hover {
             color: $icon-hover-background;

@@ -36,7 +36,6 @@ export default {
     },
     data() {
         return {
-            openDropdown: false,
             newColumnText: '',
             nextDropdownMenuStep: false,
 			dropdown: [	

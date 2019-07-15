@@ -6,7 +6,7 @@
 					<tr>
 						<th width="250" :class="collapsed ? 'has-background-white-bis' : 'has-background-white'" class="is-sticky is-left has-index">
 							<div class="field field-title is-grouped">
-								<p class="control is-margin-auto">
+								<p class="control is-margin-auto ignore-overflow">
 									<DropdownEdit 
 										:tiles="tiles.id"
 										@collapse="collapse"
@@ -51,7 +51,13 @@
 						
 						<td width="150" v-for="(value, name, index) in filteredTiles(tile.todo_item)" v-bind:key="index">
 							<template v-if="value.type === 'status'">
-								<Status :status="value.text"/>
+								<Status 
+									:status="data.status"
+									:tile="value"
+									:name="name"
+									:parentId="tiles.id"
+									:id="tile.id"
+								/>
 							</template>
 							<template v-else-if="value.type === 'date'">
 								<Date :tile="value"/>
@@ -106,20 +112,32 @@ export default {
 			newTile: {
 				title: '',
 			},
-            data: [],
+            data: {
+				status: [],
+			},
             collectionTileName: 'tiles',
 			subcollectionTileName: 'test',
 			collapsed: false,
 		}
 	},
-	computed: {
-
+	created() {
+		this.getAllStatus();
 	},
 	methods: {
+		getAllStatus(){
+			return db.collection("forms").doc('status').get().then(doc => {
+				console.log(doc.data().colors);
+				return doc.data().colors;
+			}).then(colors => { 
+            	colors.forEach(color => color.function = true);
+				this.data.status = colors;
+			});
+		},
 		collapse(boolean){	
 			console.log(' test')		
 			this.collapsed = boolean;
 		},
+
 		updateMainThemeTitle(event, tile, key){
 			const doc = tile.id;
 			const dir = db.collection(this.collectionTileName).doc(doc);
@@ -239,7 +257,6 @@ export default {
 		min-height: $min-table-height;
 		background: $white-bis;
 		&::-webkit-scrollbar { 
-            display: none; 
         } 
 	}
 	.table {
@@ -259,7 +276,9 @@ export default {
 			}
 			td {
 				border: 2px solid white;
-				box-shadow: inset 0 -1px 0px lightgrey;
+			}
+			td, .tile--status {
+				box-shadow: inset 0 -1px 0px rgba(#000000, 0.2);
 			}
 		}
 		thead th {
@@ -295,6 +314,9 @@ export default {
 			}
 		}
 	}
+	.ignore-overflow .dropdown-content {
+        position: fixed;
+    }
 
 
 	.input {

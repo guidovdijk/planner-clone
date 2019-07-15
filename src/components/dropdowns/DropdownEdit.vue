@@ -4,7 +4,6 @@
         :dropdownItems="dropdown[0]"
         @clicked="setType"
         @collapse="collapse"
-        :openDropdown="openDropdown"
         :dropdownType="nextDropdownMenuStep"
         :icon="'fas fa-chevron-circle-down'"
         :position="'left'"
@@ -46,7 +45,6 @@ export default {
     },
     data() {
         return {
-            openDropdown: false,
             newColumnText: '',
             nextDropdownMenuStep: false,
             activeColor: '',
@@ -87,11 +85,9 @@ export default {
     },
     methods: {
         setType(data){
-            console.log(data.func, data.dropdownContent);
-
-            this.$emit('collapse', data.dropdownContent);
-            if(data.func){
-                this[data.func]();
+            if(data.function){
+                this.$emit('collapse', data.dropdownContent);
+                this[data.function]();
             }
 
             if(data.dropdownContent){
@@ -100,7 +96,6 @@ export default {
 
         },
         collapse(boolean = true){
-            console.log('collapse', boolean);
             this.$emit('collapse', boolean);
             this.nextDropdownMenuStep = false;
         },

@@ -1,8 +1,9 @@
 <template>
-    <div class="tile--status">
+    <div :style="getBackgroundColor" class="tile--status ignore-overflow">
         <DropdownBasis 
-            :dropdownItems="dropdown[0]"
-            :text="'status'"
+            :dropdownItems="status"
+            :text="tile.text"
+            @clicked="getChosenStatus"
             :position="'center'"
             :rotate="'rotate-45'"
         />        
@@ -14,6 +15,7 @@
 </style>
 <script>
 import DropdownBasis from '../../elements/DropdownEl';
+import db from '../../firebase/firebase';
 
 export default {
     name: 'Status',
@@ -22,25 +24,42 @@ export default {
     },
     props: [
         "status",
+        "tile",
+        "name",
+        "parentId",
+        "id"
     ],
     data(){
-        return {
-            dropdown: [	
-                [
-                    {
-                        text: "status",
-                        background: 'red',
-                    },
-                    {
-                        text: "Text",
-                        background: 'red',
-                    },
-                    {
-                        text: "Datum",
-                        background: 'red',
-                    },
-                ]
-            ],	
+        return { 
+        }
+    },
+    created: function(){
+
+    },
+    computed: {
+        getBackgroundColor: function(){
+            return this.status.filter(el => {
+                if(el.text == this.tile.text){
+                    return {
+                        'background-color': el.background,
+                    }
+                }
+            });
+        },
+    },
+    methods: {
+        getChosenStatus(tile){
+            this.tile.text = tile.text;
+            this.openDropdown = false;
+            this.updateData(tile.text);
+        },
+        updateData(text){
+            const tileRef = db.collection("tiles").doc(this.parentId).collection('test').doc(this.id);
+            return tileRef.set({
+                [this.name]: {
+                    text: text
+                }
+            },{ merge: true});
         }
     }
 }
@@ -58,6 +77,7 @@ export default {
             display: flex;
             align-items: center;
             span {
+                color: white;
                 width: 100%;
             }
         }
@@ -65,6 +85,20 @@ export default {
             top: 0;
             width: 200px;
             .dropdown-content {
+                transform: translate(-10%, 35px);
+                &:before {
+                    $triangle-width: 12px;
+                    content: "";
+                    position: absolute;
+                    width: 0; 
+                    height: 0; 
+                    border-left: $triangle-width solid transparent;
+                    border-right: $triangle-width solid transparent;
+                    border-bottom: 9px solid white;
+                    top: -9px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                }
                 .dropdown-grid {
                     grid-template-columns: 1fr 1fr;
                     display: grid;
