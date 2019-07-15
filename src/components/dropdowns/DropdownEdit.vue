@@ -49,12 +49,11 @@ export default {
             nextDropdownMenuStep: false,
             activeColor: '',
             colors: [
-                'red',
-                'blue',
-                'green',
-                'yellow',
-                'pink',
-                'orange',
+                '#00c875',
+                '#579bfc',
+                '#fdab3d',
+                '#e2445c',
+                '#a25ddc',
             ],
 			dropdown: [	
                 [
