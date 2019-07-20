@@ -52,6 +52,10 @@ export default {
                         text: "Date",
                         icon: "calendar-alt",
                     },
+                    {
+                        text: "Time tracking",
+                        icon: "clock",
+                    },
                 ]
             ],	
         }

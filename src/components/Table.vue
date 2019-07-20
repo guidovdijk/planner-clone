@@ -65,6 +65,14 @@
 									:color="getThemeColor(tiles.tile.color, '#363636')"
 								/>
 							</template>
+							<template v-else-if="value.type === 'Time tracking'">
+								<TimeTracking
+									:tile="value"
+									:parentId="tiles.id"
+									:name="name"
+									:id="tile.id"
+								/>
+							</template>
 							<template v-else>
 								<input v-on:change="updataData($event, name, tiles.id, tile.id)" type="text" :value="value.text"/>
 							</template>
@@ -96,6 +104,7 @@ import DropdownEdit from './dropdowns/DropdownEdit';
 import DropdownAdd from './dropdowns/DropdownAdd';
 import Status from "./tiles/Status";
 import Date from "./tiles/Date";
+import TimeTracking from "./tiles/TimeTracking";
 
 export default {
 	name: 'Table',
@@ -104,6 +113,7 @@ export default {
 		DropdownEdit: DropdownEdit,
 		Status: Status,
 		Date: Date,
+		TimeTracking: TimeTracking,
 	},
     props: [
 		"tiles",
