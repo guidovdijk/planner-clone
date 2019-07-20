@@ -48,7 +48,7 @@ export default {
         align-items: center;
     }
     .time {
-        width: 65%;
+        width: 100%;
         margin: auto;
         font-size: 11px;
         display: flex;
@@ -57,7 +57,8 @@ export default {
         border-radius: 10px;
         color: white;
         height: 20px;
-        padding: 0px 20px;
+        max-width: 130px;
+        padding: 0px 10px;
         align-items: center;
         font-weight: bold;
         &__start {
